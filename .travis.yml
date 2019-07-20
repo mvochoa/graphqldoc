@@ -2,7 +2,8 @@ lenguaje: go
 go: "1.11"
 
 stages:
-  - docker
+  - name: docker
+    if: branch = master
   - name: deploy
     if: tag IS present
 
