@@ -1,2 +1,5 @@
 doc/
 .vscode/
+*.sum
+*.md
+!README.md

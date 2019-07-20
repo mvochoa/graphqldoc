@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"os"
 
-	"gitlab.com/mvochoa/graphqldoc"
+	"github.com/mvochoa/graphqldoc"
 )
 
 func main() {

@@ -2,7 +2,7 @@ package graphqldoc
 
 import (
 	"fmt"
-	"io/ioutil"
+	"log"
 	"os"
 	"text/template"
 )
@@ -102,18 +102,18 @@ func generateDocs(schema Schema) {
 			break
 		}
 	}
+	log.Printf("%+v", schema)
+
 	scalars(scalar)
 	enums(enum)
 	interfaces(inter)
 
-	// b, _ := json.Marshal(inter)
-	// log.Println(string(b))
 }
 
 func queries(query FullType) {
 	f, err := os.OpenFile(queryFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	checkError(err)
-	data, err := ioutil.ReadFile("template/schema.tmpl")
+	data, err := Asset("template/schema.tmpl")
 	checkError(err)
 
 	t := template.Must(temp(string(data)))
@@ -124,7 +124,7 @@ func queries(query FullType) {
 func mutations(mutation FullType) {
 	f, err := os.OpenFile(mutationFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	checkError(err)
-	data, err := ioutil.ReadFile("template/schema.tmpl")
+	data, err := Asset("template/schema.tmpl")
 	checkError(err)
 
 	t := template.Must(temp(string(data)))
@@ -135,7 +135,7 @@ func mutations(mutation FullType) {
 func scalars(scalars []FullType) {
 	f, err := os.OpenFile(scalarFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	checkError(err)
-	data, err := ioutil.ReadFile("template/scalar.tmpl")
+	data, err := Asset("template/scalar.tmpl")
 	checkError(err)
 
 	t := template.Must(temp(string(data)))
@@ -146,7 +146,7 @@ func scalars(scalars []FullType) {
 func enums(enums []FullType) {
 	f, err := os.OpenFile(enumFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	checkError(err)
-	data, err := ioutil.ReadFile("template/enum.tmpl")
+	data, err := Asset("template/enum.tmpl")
 	checkError(err)
 
 	t := template.Must(temp(string(data)))
@@ -157,7 +157,7 @@ func enums(enums []FullType) {
 func interfaces(interfaces []FullType) {
 	f, err := os.OpenFile(interfaceFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	checkError(err)
-	data, err := ioutil.ReadFile("template/interface.tmpl")
+	data, err := Asset("template/interface.tmpl")
 	checkError(err)
 
 	t := template.Must(temp(string(data)))

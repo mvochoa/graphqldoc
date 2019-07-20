@@ -5,8 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strconv"
-	"strings"
+	"net/url"
 )
 
 type Data struct {
@@ -22,7 +21,7 @@ type Response struct {
 var query string
 
 func init() {
-	b, err := ioutil.ReadFile("./schema.graphql")
+	b, err := Asset("template/schema.graphql")
 	checkError(err)
 
 	query = string(b)
@@ -32,16 +31,9 @@ func init() {
 func HTTP(endpoint string) {
 	var response Response
 
-	b, err := json.Marshal(query)
-	checkError(err)
-	query = `{"query":` + string(b) + `}`
+	resp, err := http.PostForm(endpoint,
+		url.Values{"query": {query}})
 
-	req, _ := http.NewRequest("POST", endpoint, strings.NewReader(query))
-	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Content-Length", strconv.Itoa(len(query)))
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
 	checkError(err)
 
 	defer resp.Body.Close()

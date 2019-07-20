@@ -83,4 +83,3 @@ fragment TypeRef on __Type {
     }
   }
 }
-
