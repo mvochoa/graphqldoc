@@ -15,6 +15,7 @@ jobs:
         - go-bindata -o assets.go template/
         - sed -i 's/package\ main/package\ graphqldoc/g' assets.go
         - cd cmd/
+        - GOOS=linux GOARCH=386 go build -o graphqldoc.linux.alpine
         - GOOS=linux GOARCH=amd64 go build -o graphqldoc.linux
         - GOOS=windows GOARCH=amd64 go build -o graphqldoc.windows.exe
         - GOOS=darwin GOARCH=amd64 go build -o graphqldoc.darwin
@@ -29,6 +30,7 @@ jobs:
           - graphqldoc.linux
           - graphqldoc.darwin
           - graphqldoc.windows.exe
+          - graphqldoc.linux.alpine
         skip_cleanup: true
         on:
           all_branches: true
