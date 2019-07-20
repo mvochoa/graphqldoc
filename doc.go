@@ -2,8 +2,8 @@ package graphqldoc
 
 import (
 	"fmt"
-	"log"
 	"os"
+	"strings"
 	"text/template"
 )
 
@@ -67,6 +67,7 @@ type Schema struct {
 var (
 	dir           = "doc/"
 	queryFile     = dir + "query.md"
+	objectFile    = dir + "object.md"
 	mutationFile  = dir + "mutation.md"
 	scalarFile    = dir + "scalar.md"
 	enumFile      = dir + "enum.md"
@@ -89,24 +90,30 @@ func generateDocs(schema Schema) {
 	var scalar []FullType
 	var enum []FullType
 	var inter []FullType
+	var object []FullType
 	for _, v := range schema.Types {
-		switch v.Kind {
-		case "SCALAR":
-			scalar = append(scalar, v)
-			break
-		case "ENUM":
-			enum = append(enum, v)
-			break
-		case "INTERFACE":
-			inter = append(inter, v)
-			break
+		if !strings.Contains(v.Name, "__") {
+			switch v.Kind {
+			case "SCALAR":
+				scalar = append(scalar, v)
+				break
+			case "ENUM":
+				enum = append(enum, v)
+				break
+			case "INTERFACE":
+				inter = append(inter, v)
+				break
+			case "OBJECT":
+				object = append(object, v)
+				break
+			}
 		}
 	}
-	log.Printf("%+v", schema)
 
 	scalars(scalar)
 	enums(enum)
 	interfaces(inter)
+	objects(object)
 
 }
 
@@ -143,6 +150,17 @@ func scalars(scalars []FullType) {
 	checkError(err)
 }
 
+func objects(scalars []FullType) {
+	f, err := os.OpenFile(objectFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	checkError(err)
+	data, err := Asset("template/object.tmpl")
+	checkError(err)
+
+	t := template.Must(temp(string(data)))
+	err = t.Execute(f, scalars)
+	checkError(err)
+}
+
 func enums(enums []FullType) {
 	f, err := os.OpenFile(enumFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	checkError(err)
@@ -171,6 +189,7 @@ func temp(data string) (*template.Template, error) {
 			value := struct {
 				Name string
 				Type string
+				Kind string
 			}{Type: "%s"}
 			for t.OfType != nil {
 				if t.Kind == "NON_NULL" {
@@ -182,7 +201,15 @@ func temp(data string) (*template.Template, error) {
 				t = t.OfType
 			}
 			value.Name = t.Name
+			value.Kind = t.Kind
 			value.Type = fmt.Sprintf(value.Type, value.Name)
+			if t.Kind == "SCALAR" {
+				value.Name = "scalar.md#" + value.Name
+			}
+			if t.Kind == "OBJECT" {
+				value.Name = "object.md#" + value.Name
+			}
+			value.Name = strings.Replace(strings.ToLower(value.Name), " ", "-", -1)
 			return value
 
 		},

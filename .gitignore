@@ -3,3 +3,4 @@ doc/
 *.sum
 *.md
 !README.md
+.vscode/

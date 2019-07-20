@@ -1,0 +1,9 @@
+# Objects
+{{range .}}
+## {{.Name}}
+{{.Description}}
+
+| Field  | Type               | Description      |
+| --------- | ------------------ | ---------------- |
+{{range .Fields}}| `{{.Name}}` | {{$t := getType .Type}}[{{$t.Type}}]({{$t.Name}}) | {{.Description}} {{if .IsDeprecated}}**Deprecated**{{end}} |
+{{end}}{{end}}
