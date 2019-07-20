@@ -1,5 +1,7 @@
 # {{.Name}}
-{{.Description}}{{range .Fields}}{{ $length := len .Args }}{{$theType := getType .Type}}
+{{.Description}}
+
+{{range .Fields}}{{ $length := len .Args }}{{$theType := getType .Type}}
 {{if .IsDeprecated}}`Deprecated`{{end}}**{{.Name}}** {{ if ne $length 0 }}({{range $index, $element := .Args}}{{if $index}}, {{end}}`{{$element.Name}}`: {{$t := getType $element.Type}}[{{$t.Type}}]({{$t.Name}}){{end}}){{end}} : [{{$theType.Type}}]({{$theType.Name}})
 {{if .IsDeprecated}}*{{.DeprecationReason}}*{{end}}
 {{.Description}}

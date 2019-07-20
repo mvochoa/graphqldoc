@@ -2,11 +2,18 @@ lenguaje: go
 go: "1.11"
 
 stages:
+  - docker
   - name: deploy
     if: tag IS present
 
 jobs:
   include:
+    - stage: docker
+      script:
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - docker build -t $DOCKER_USERNAME/graphqldoc .
+        - docker tag $DOCKER_USERNAME/graphqldoc $DOCKER_USERNAME/graphqldoc:latest
+        - docker push $DOCKER_USERNAME/graphqldoc:latest
     - stage: deploy
       env:
         - GO111MODULE=on
@@ -21,9 +28,7 @@ jobs:
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker build -t $DOCKER_USERNAME/graphqldoc ../
         - docker tag $DOCKER_USERNAME/graphqldoc $DOCKER_USERNAME/graphqldoc:$TRAVIS_TAG
-        - docker tag $DOCKER_USERNAME/graphqldoc $DOCKER_USERNAME/graphqldoc:latest
         - docker push $DOCKER_USERNAME/graphqldoc:$TRAVIS_TAG
-        - docker push $DOCKER_USERNAME/graphqldoc:latest
       deploy:
         provider: releases
         api_key: ${api_key}
