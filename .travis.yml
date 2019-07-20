@@ -15,14 +15,15 @@ jobs:
         - go-bindata -o assets.go template/
         - sed -i 's/package\ main/package\ graphqldoc/g' assets.go
         - cd cmd/
-        - GOOS=linux GOARCH=386 go build -o graphqldoc.linux.alpine
         - GOOS=linux GOARCH=amd64 go build -o graphqldoc.linux
         - GOOS=windows GOARCH=amd64 go build -o graphqldoc.windows.exe
         - GOOS=darwin GOARCH=amd64 go build -o graphqldoc.darwin
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker build -t $DOCKER_USERNAME/graphqldoc ../
         - docker tag $DOCKER_USERNAME/graphqldoc $DOCKER_USERNAME/graphqldoc:$TRAVIS_TAG
+        - docker tag $DOCKER_USERNAME/graphqldoc $DOCKER_USERNAME/graphqldoc:latest
         - docker push $DOCKER_USERNAME/graphqldoc:$TRAVIS_TAG
+        - docker push $DOCKER_USERNAME/graphqldoc:latest
       deploy:
         provider: releases
         api_key: ${api_key}
@@ -30,7 +31,6 @@ jobs:
           - graphqldoc.linux
           - graphqldoc.darwin
           - graphqldoc.windows.exe
-          - graphqldoc.linux.alpine
         skip_cleanup: true
         on:
           all_branches: true

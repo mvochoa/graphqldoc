@@ -204,10 +204,10 @@ func temp(data string) (*template.Template, error) {
 			value.Kind = t.Kind
 			value.Type = fmt.Sprintf(value.Type, value.Name)
 			if t.Kind == "SCALAR" {
-				value.Name = "scalar.md#" + value.Name
+				value.Name = "scalar#" + value.Name
 			}
 			if t.Kind == "OBJECT" {
-				value.Name = "object.md#" + value.Name
+				value.Name = "object#" + value.Name
 			}
 			value.Name = strings.Replace(strings.ToLower(value.Name), " ", "-", -1)
 			return value
