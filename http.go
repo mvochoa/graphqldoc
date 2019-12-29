@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
 )
 
 type Data struct {
@@ -31,9 +30,15 @@ func init() {
 func HTTP(endpoint string) {
 	var response Response
 
-	resp, err := http.PostForm(endpoint,
-		url.Values{"query": {query}})
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", endpoint, nil)
+	checkError(err)
 
+	q := req.URL.Query()
+	q.Add("query", query)
+	req.URL.RawQuery = q.Encode()
+
+	resp, err := client.Do(req)
 	checkError(err)
 
 	defer resp.Body.Close()
