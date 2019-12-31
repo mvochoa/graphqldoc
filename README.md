@@ -1,4 +1,4 @@
-# Documentation generator for GraphQL
+# (Moved) Documentation generator for GraphQL
 
 Markdown generator for documenting GraphQL schema
 
